@@ -1,3 +1,4 @@
+%define keepstatic 1
 Name:       libffi
 Summary:    A portable foreign function interface library
 Version:    3.4.6
@@ -51,13 +52,23 @@ Requires(postun): /sbin/install-info
 The %{name}-devel package contains libraries and header files for
 developing applications that use %{name}.
 
+%package devel-static
+Summary:    Development files for %{name}
+Requires(post): /sbin/install-info
+Requires(postun): /sbin/install-info
+
+%description devel-static
+The %{name}-devel package contains libraries and header files for
+developing applications that use %{name}.
+
+
 
 %prep
 
 %autosetup -p1 -n %{name}-%{version}/%{name}
 
 %build
-%reconfigure --disable-static \
+%reconfigure --enable-static \
     --includedir=%{_includedir} \
     --disable-docs
 
@@ -67,8 +78,8 @@ developing applications that use %{name}.
 %make_install
 
 # include old version to ensure smooth upgrade. to be removed later.
-cp -a /%{_libdir}/libffi.so.6 $RPM_BUILD_ROOT/%{_libdir}
-cp -a /%{_libdir}/libffi.so.6.0.4 $RPM_BUILD_ROOT/%{_libdir}
+#cp -a /%{_libdir}/libffi.so.6 $RPM_BUILD_ROOT/%{_libdir}
+#cp -a /%{_libdir}/libffi.so.6.0.4 $RPM_BUILD_ROOT/%{_libdir}
 
 %post -p /sbin/ldconfig
 
@@ -84,3 +95,6 @@ cp -a /%{_libdir}/libffi.so.6.0.4 $RPM_BUILD_ROOT/%{_libdir}
 %{_libdir}/pkgconfig/*.pc
 %{_libdir}/*.so
 %doc %{_mandir}/man3/*.gz
+
+%files devel-static
+%{_libdir}/*.a
